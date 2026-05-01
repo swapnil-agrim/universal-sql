@@ -1,0 +1,57 @@
+{
+    "rows": [
+        {
+            "number": 1,
+            "title": "PROJ-131: fix change #1",
+            "key": "PROJ-131",
+            "status": "Done",
+            "assignee": "[REDACTED]"
+        },
+        {
+            "number": 2,
+            "title": "PROJ-111: chore change #2",
+            "key": "PROJ-111",
+            "status": "To Do",
+            "assignee": "[REDACTED]"
+        },
+        {
+            "number": 4,
+            "title": "PROJ-103: chore change #4",
+            "key": "PROJ-103",
+            "status": "To Do",
+            "assignee": "[REDACTED]"
+        },
+        {
+            "number": 5,
+            "title": "PROJ-128: feat change #5",
+            "key": "PROJ-128",
+            "status": "In Review",
+            "assignee": "[REDACTED]"
+        },
+        {
+            "number": 8,
+            "title": "PROJ-112: feat change #8",
+            "key": "PROJ-112",
+            "status": "In Review",
+            "assignee": "[REDACTED]"
+        }
+    ],
+    "columns": [
+        "number",
+        "title",
+        "key",
+        "status",
+        "assignee"
+    ],
+    "freshness_ms": 0,
+    "rate_limit_status": "ok",
+    "trace_id": "bfcd2cbc58f83570c6d4412c62b88763",
+    "cache_status": {
+        "github.pull_requests": "miss",
+        "jira.issues": "miss"
+    },
+    "rows_per_source": {
+        "github.pull_requests": 97,
+        "jira.issues": 120
+    }
+}

@@ -1,0 +1,61 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      CONNECTOR_MODE: mock
+      DEFAULT_TTL_SECONDS: "300"
+      # Generous budgets so the load test runs cleanly.
+      # Tighten these to demo the friendly RATE_LIMIT_EXHAUSTED path.
+      GITHUB_RPM_GLOBAL: "1200"
+      GITHUB_RPM_TENANT: "600"
+      GITHUB_RPM_USER: "300"
+      JIRA_RPM_GLOBAL: "1200"
+      JIRA_RPM_TENANT: "600"
+      JIRA_RPM_USER: "300"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4000:3000"
+    environment:
+      NEXT_PUBLIC_BACKEND_URL: http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=1h
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    ports:
+      - "4001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_USERS_DEFAULT_THEME: dark
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus

@@ -1,0 +1,44 @@
+# Prototype policy file — one tenant, three users, one RLS rule, one CLS mask.
+# Production: this becomes a Policy DSL with formal semantics + OPA evaluation.
+
+users:
+  alice:
+    tenant: acme
+    roles: [engineer]
+    attrs:
+      allowed_repos: ["acme/api", "acme/web"]
+  bob:
+    tenant: acme
+    roles: [engineer]
+    attrs:
+      # Bob is restricted to one repo — exercises RLS pruning
+      allowed_repos: ["acme/api"]
+  manager:
+    tenant: acme
+    roles: [engineer, manager]
+    attrs:
+      allowed_repos: ["acme/api", "acme/web"]
+
+tenants:
+  acme:
+    allowed_tables:
+      - github.pull_requests
+      - jira.issues
+
+policies:
+  # RLS: engineers can only see PRs from repos in their allowed_repos attribute.
+  - table: github.pull_requests
+    rls:
+      apply_to_roles: [engineer]
+      predicate:
+        column: repo
+        op: IN
+        value_from_user: allowed_repos
+
+  # CLS: redact assignee for non-managers (engineers without manager role).
+  - table: jira.issues
+    cls:
+      apply_to_roles_not_in: [manager]
+      mask:
+        column: assignee
+        strategy: redact

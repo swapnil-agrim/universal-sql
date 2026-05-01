@@ -1,0 +1,87 @@
+    "name": "connector.jira.fetch",
+    "context": {
+        "trace_id": "0x3a8159e28c126b06ef3d393ca9d055a3",
+        "span_id": "0x4d5c60325773683b",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x15903d3dd94e3aa8",
+    "start_time": "2026-04-30T14:23:48.922359Z",
+    "end_time": "2026-04-30T14:23:48.938747Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "connector.name": "jira",
+        "predicates.count": 0,
+        "rows.count": 120
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+--
+    "name": "connector.github.fetch",
+    "context": {
+        "trace_id": "0x3a8159e28c126b06ef3d393ca9d055a3",
+        "span_id": "0x3353dd80c3d2c9e7",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x15903d3dd94e3aa8",
+    "start_time": "2026-04-30T14:23:48.922279Z",
+    "end_time": "2026-04-30T14:23:48.943757Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "connector.name": "github",
+        "predicates.count": 2,
+        "rows.count": 97
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+--
+    "name": "planner.fetch_all",
+    "context": {
+        "trace_id": "0x3a8159e28c126b06ef3d393ca9d055a3",
+        "span_id": "0x15903d3dd94e3aa8",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x0f9181d9167623ad",
+    "start_time": "2026-04-30T14:23:48.922017Z",
+    "end_time": "2026-04-30T14:23:48.943870Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {},
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.27.0",
+--
+    "name": "planner.execute",
+    "context": {
+        "trace_id": "0x3a8159e28c126b06ef3d393ca9d055a3",
+        "span_id": "0x0f9181d9167623ad",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x96908886b73d6411",
+    "start_time": "2026-04-30T14:23:48.920752Z",
+    "end_time": "2026-04-30T14:23:48.944252Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "user.id": "alice",
+        "user.tenant": "acme"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {

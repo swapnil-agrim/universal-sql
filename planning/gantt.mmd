@@ -1,0 +1,57 @@
+gantt
+    title Universal SQL — 6-Month Sprint Plan
+    dateFormat  YYYY-MM-DD
+    axisFormat  W%V
+
+    section Theme A (Connector velocity)
+    SDK v0 + protocol           :a1,    2026-05-01, 14d
+    GitHub + Jira mocks         :a2,    2026-05-01, 14d
+    Connector ergonomics        :a3,    2026-08-21, 14d
+    Salesforce connector        :a4,    after a3,   14d
+    Zendesk + Notion            :a5,    after a4,   14d
+
+    section Theme B (Query intelligence)
+    Planner SELECT/WHERE/LIMIT  :b1,    2026-05-15, 14d
+    Cardinality estimator       :b2,    2026-05-29, 14d
+    DuckDB execution path       :b3,    2026-05-29, 14d
+    Freshness layer (TTL+ETag)  :b4,    2026-06-12, 14d
+    Async overflow path         :b5,    2026-06-26, 14d
+    Policy DSL → predicates     :b6,    2026-07-10, 14d
+    ClickHouse materialisation  :b7,    2026-07-24, 14d
+    Mode-pick + plan cache      :b8,    2026-08-07, 14d
+
+    section Theme C (Trust fabric)
+    Entitlement skeleton        :c1,    2026-05-15, 14d
+    Per-tenant KMS (Vault)      :c2,    2026-06-12, 14d
+    Cross-tenant red-team v0    :c3,    2026-06-12, 14d
+    Audit log spec + writer     :c4,    2026-06-26, 28d
+    STRIDE + pen-test SoW       :c5,    2026-08-21, 14d
+    Residency enforcement       :c6,    2026-09-04, 14d
+    Crypto-shred drill          :c7,    2026-09-04, 14d
+    External pen-test           :c8,    2026-09-18, 14d
+    Pen-test remediation        :c9,    2026-10-02, 14d
+
+    section Theme D (Operational maturity)
+    Docker dev env + CI         :d1,    2026-05-01, 14d
+    Terraform K8s modules       :d2,    2026-05-29, 14d
+    OTel + Prom + Grafana       :d3,    2026-06-12, 14d
+    Temporal Cloud + queues     :d4,    2026-06-26, 14d
+    Runbooks + on-call          :d5,    2026-07-10, 14d
+    HPA + cluster autoscaler    :d6,    2026-08-07, 14d
+    Helm multi/single-tenant    :d7,    2026-08-07, 14d
+    Chaos drills                :d8,    2026-09-18, 14d
+    GA runbook + SLO tuning     :d9,    2026-10-02, 14d
+
+    section Theme E (Self-serve onboarding)
+    Docs site v0                :e1,    2026-06-12, 14d
+    Connector marketplace UI    :e2,    2026-09-04, 14d
+    Admin console v1            :e3,    2026-09-18, 14d
+    Self-serve onboarding flow  :e4,    2026-10-02, 14d
+
+    section Milestone demos
+    M1 demo                     :milestone, m1, 2026-05-29, 0d
+    M2 demo                     :milestone, m2, 2026-06-26, 0d
+    M3 demo                     :milestone, m3, 2026-07-24, 0d
+    M4 demo                     :milestone, m4, 2026-08-21, 0d
+    M5 demo                     :milestone, m5, 2026-09-18, 0d
+    GA launch                   :milestone, ga, 2026-10-16, 0d
