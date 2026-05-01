@@ -19,6 +19,8 @@
 
 ## 2. North-Star Metrics (shared scorecard)
 
+### 2.1 GA targets
+
 | Outcome | Metric | M6 GA target |
 |---|---|---|
 | Time-to-value | Median hours from contract → first query | ≤ 24 |
@@ -29,6 +31,25 @@
 | Enterprise trust | Audit-trail coverage of cross-system access | 100% |
 | Unit economics | Cost / 1000 queries | ≤ $0.50 |
 | Unit economics | Idle-tenant overhead / month | ≤ $20 |
+
+### 2.2 Quarterly checkpoints — intermediate targets
+
+GA targets aren't checkable mid-flight. Each metric has an intermediate
+reading at the end of M2, M4, and M6 so we know if velocity is on track:
+
+| Metric | M2 | M4 | M6 (GA) |
+|---|---|---|---|
+| Onboarding hours | n/a (no design partners) | ≤ 7 days (first migration) | ≤ 24 hours |
+| Connector ship time | n/a (single connector path) | ≤ 10 dev-days (3-connector test) | ≤ 5 dev-days |
+| Query P95 (single-source) | < 1.8 s (M2 exit) | < 1.5 s (M4 exit) | < 1.5 s |
+| Gateway availability | n/a (single tenant) | 99.5 % on staging | 99.9 % monthly |
+| Cross-tenant leakage incidents | 0 (red-team v0) | 0 | 0 |
+| Audit-trail coverage | n/a (writer not deployed) | 80 % (M3 lands writer; M4 instrumentation gaps) | 100 % |
+| Cost / 1000 queries | n/a | ≤ $0.75 (M4 cost report) | ≤ $0.50 |
+| Idle-tenant overhead / month | n/a | ≤ $30 | ≤ $20 |
+
+Misses at M2 / M4 trigger a re-plan, not a slip — the buffer is built
+into M5–M6 by design.
 
 ---
 
@@ -57,7 +78,13 @@
 | Product Manager | 0.5 | Theme A & E (connector prioritization, design partners) |
 | Developer Experience | 0.5 | Theme A & E (SDK ergonomics, public docs) |
 
-**Flex:** Security ramps to 1.0 in M5–M6 for pen-test prep. PM doubles in M3 when design partners onboard. Hiring kicks off M0.
+**Staffing assumption:** all roles staffed from Sprint 1; no hiring
+contingencies in plan. SEC stays at 0.5 FTE for the entire 6 months —
+security-heavy implementation work (audit log writer, crypto-shred
+automation, pen-test execution) is split with BE / INFRA / external
+vendor; SEC owns spec, review, and validation. See
+[`sprint_planning.md §4`](sprint_planning.md) for the per-sprint
+load matrix that demonstrates this is sustainable.
 
 ---
 
@@ -125,18 +152,19 @@
 
 ### Phase 3 — GA Readiness (M5–M6): "Harden and scale"
 
-**M5 — Connector breadth, security depth**
+**M5 — Connector breadth, security depth, DR**
 
 | Theme | Deliverable |
 |---|---|
 | A | 5 production-ready connectors (add Salesforce, Zendesk, Notion); contract test suite |
 | C | STRIDE threat model; pen-test readiness; automated off-boarding (crypto-shred); residency enforcement |
-| D | Per-tenant cost guardrails; perf tuning; multi-AZ + multi-region active/passive design |
+| D | Per-tenant cost guardrails; perf tuning; **DR/BCP playbook** with multi-AZ baseline + active/passive multi-region; **RPO ≤ 15 min, RTO ≤ 1 h** for the control plane |
 
 **Exit:**
 - Perf & cost report: SLOs met across 5 connectors; cost ≤ $0.50 / 1k queries
 - Off-boarding drill: < 5 min, KMS revoked, no residual data
 - Pen-test scoping signed by external vendor
+- DR fail-over drill executed in staging within RPO/RTO targets
 
 **M6 — GA sign-off**
 
@@ -183,7 +211,7 @@
 | R6 | Cardinality estimator inaccurate early | High | Low | Conservative defaults; mid-flight escalation; EWMA pre-populated by shadow traffic | TL |
 | R7 | Materialization (ClickHouse) op load | Med | Med | Managed ClickHouse Cloud; revisit self-host post-GA; runbook for TTL stalls | Infra |
 | R8 | Design partners won't grant prod credentials | Med | High | Sandbox-first; mock-source mode; staged credential exchange via security review | PM |
-| R9 | Hiring miss (staff/security) | Med | High | Interviewing from M0; bridge with contractors | EM |
+| R9 | Vendor procurement delay (Vault, Temporal Cloud, ClickHouse Cloud, pen-test SoW) | Med | High | Procurement starts M0 (see §9 External dependencies); fallbacks identified per vendor | EM + INFRA |
 | R10 | Compliance scope creep (SOC2 / HIPAA) | Med | Med | GA scope locked at SOC2 Type 1 only; HIPAA deferred post-GA | EM + Security |
 
 ---
@@ -198,6 +226,104 @@
 
 ---
 
-## 9. Mapping to the take-home prototype
+## 9. External dependencies — vendor & cross-team blockers
 
-Prototype lands in **M1's exit criteria minus per-tenant KMS** (collapsed for time). Everything beyond is roadmap, not submission scope. The design doc tells the GA story; the prototype proves M1 is achievable.
+These are real-world lead times that don't appear in engineering effort
+but can move GA. Procurement starts at M0 to keep the critical path
+clear.
+
+| Dependency | Owner | Lead time | Latest start | Required by |
+|---|---|---|---|---|
+| AWS account, regions, KMS keys, billing | INFRA + EM | 2–4 weeks (cost negotiation) | Week 0 (pre-S1) | M2 |
+| Vault Enterprise license + setup | INFRA | 4–6 weeks | Week 4 (mid-S2) | M2 |
+| Temporal Cloud namespace | INFRA | 1–2 weeks | Week 8 (S5) | M3 |
+| ClickHouse Cloud account | INFRA | 1 week | Week 12 (S7) | M4 |
+| OIDC IdP integration with each design partner | PM + INFRA | 2–3 weeks per partner | Week 8 (S5) | M3 |
+| Customer DPA template | EM + Legal | 2–3 weeks | Week 4 (S3) | M3 |
+| Pricing model finalisation | EM + Finance | Ongoing → finalised by M5 | Week 12 (S7) | M5 |
+| External pen-test vendor SoW | EM + SEC | 4–6 weeks (RFP + contract) | Week 14 (S7) | M5 |
+| SOC 2 Type 1 auditor selection + readiness review | EM + SEC | 6–8 weeks | Week 8 (S4) | M6 |
+
+**Failure mode:** any dependency missing its "Latest start" rolls the
+"Required by" milestone forward. Tracked weekly in the operating-cadence
+review with the same red/amber/green discipline as the engineering
+backlog.
+
+---
+
+## 10. Design-partner ladder
+
+Three production tenants by GA isn't an event — it's a journey with
+gates. Each partner moves through the ladder at their own pace; the
+plan supports concurrent partners at different stages.
+
+| Stage | Sprint window | Description | Gate to advance |
+|---|---|---|---|
+| 0. Outreach | S1–S3 | Verbal interest; business case captured; mutual fit | Signed evaluation agreement |
+| 1. Sandbox | S3–S4 (M2) | Mock connectors, sample queries, no production credentials | Sandbox queries pass; legal review of DPA started |
+| 2. Staging | S5–S6 (M3) | Production-shape data via partner sandbox API; OIDC integrated; RLS / CLS policies authored together | DPA signed; security review of policy DSL passes; partner CTO sign-off |
+| 3. Production | S9–S10 (M5) | First production tenant queries flowing; tier-1 support lane open; on-call paged on their incidents | 2 weeks of production traffic with no SEV-1; NPS ≥ 7 |
+| 4. Reference | S12 (M6) | Public reference; case-study published; willing to talk to prospects | Marketing + legal joint sign-off |
+
+**Plan target at GA:** 3 partners at Stage 3, ≥ 1 partner at Stage 4.
+
+**Risk if partners stall at Stage 2:** GA's "3 partners in production
+≥ 2 weeks" criterion slips. Mitigation: pipeline 5 partners through
+Stage 1 to land 3 at Stage 3 (60 % conversion assumption is
+conservative based on prior experience).
+
+---
+
+## 11. Production Readiness Review (PRR) — GA gate
+
+Run on Sprint 12 day 5. Ten checklist items — every box must be
+green for GA sign-off. A red item at PRR = GA slip; an amber item =
+go with mitigation tracked.
+
+### Reliability
+- [ ] All 12 chaos scenarios from [`design/06-chaos-plan.md`](../design/06-chaos-plan.md) pass in M6 game day
+- [ ] On-call rotation populated; PagerDuty escalation policy active; runbooks tested in dry-run
+- [ ] SLO dashboards show 99.9 % availability over the previous 30-day window
+- [ ] Error-budget policy ratified (release-freeze trigger defined and agreed by exec)
+- [ ] Rollback path tested for each major component (canary + blue-green)
+
+### Security
+- [ ] External pen-test all-clear (no critical / high findings open)
+- [ ] SOC 2 Type 1 audit complete OR formal "ready for audit" letter from auditor
+- [ ] Off-boarding drill executed in last 30 days; < 5 min crypto-shred SLA met
+
+### Capacity
+- [ ] 1k QPS sustained for 60 min with P95 < 1.5 s across all 5 connectors
+- [ ] 2× peak headroom verified in staging
+
+### Operational
+- [ ] Status page live and tested
+- [ ] Tier-1 support lane operational with per-partner SLA
+- [ ] DR/BCP documented; RPO ≤ 15 min, RTO ≤ 1 h verified by drill
+
+### Documentation
+- [ ] Admin guide, connector author guide, policy DSL reference, security whitepaper, DPA template all published
+
+PRR is the *only* go/no-go gate at GA. Phase gates between earlier
+milestones are lighter (M-exit criteria + risk-register green).
+
+---
+
+## 12. Companion documents
+
+| Doc | Why it matters here |
+|---|---|
+| [`sprint_planning.md`](sprint_planning.md) | Per-sprint task allocation, Mermaid Gantt, dependency graph; the operational expansion of this doc |
+| [`../design/06-chaos-plan.md`](../design/06-chaos-plan.md) | 12 chaos scenarios with hypothesis, injection, pass criteria; M5 + M6 game days are the *acceptance proof* of every defensive claim in the design |
+| [`../design/runbooks/`](../design/runbooks/) | Three operational runbooks (rate-limit flood, connector auth failure, cache stampede); referenced by the chaos plan and the PRR checklist |
+| [`../design/05-capacity-1k-qps.md`](../design/05-capacity-1k-qps.md) | Sizing math and bottleneck succession; the source of M4's "1k QPS / P95 < 1.5 s" exit criterion |
+
+---
+
+## 13. Mapping to the take-home prototype
+
+Prototype lands in **M1's exit criteria minus per-tenant KMS**
+(collapsed for time). Everything beyond is roadmap, not submission
+scope. The design doc tells the GA story; the prototype proves M1 is
+achievable. The chaos plan and runbooks (referenced in §12) show the
+M5–M6 operational maturity is real, not hand-waved.
