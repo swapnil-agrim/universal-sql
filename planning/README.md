@@ -7,6 +7,7 @@ built. Both files target the **Execution Plan (15%)** rubric line.
 |---|---|---|
 | [`02-execution-plan.md`](02-execution-plan.md) | Exec, GTM, hiring committee | North-star outcomes, engineering themes, 6-month milestones (M1–M6), team shape, risk register, budget assumptions |
 | [`sprint_planning.md`](sprint_planning.md) | Engineering team, EM, PM | 12 × 2-week sprints with named tasks per role, deliverables, demos, dependency graph, sprint review template |
+| [`deferred-items.md`](deferred-items.md) | Reviewers, design partners, Eng Lead | Canonical 40-row list of every deferred capability with milestone, prototype substitution, and rationale |
 | [`gantt.png`](gantt.png) · [`gantt.svg`](gantt.svg) | Anyone in a meeting | Rendered Gantt chart — 5 themes × 25+ work items × 6 milestones |
 | [`gantt.mmd`](gantt.mmd) | Engineering team | Editable Mermaid source for the Gantt; re-render with `mmdc` |
 
